@@ -1,2 +1,3 @@
 report_output*
 __pycache__/
+*.db
