@@ -19,12 +19,14 @@ parser.add_argument(
     "--output_dir", "-o", type=str, default="report_output" + date_now + "/"
 )
 parser.add_argument("--input_dir", "-i", type=str, default=".")
-parser.add_argument("--pdf", action="store_true")
+parser.add_argument("--pdf", action="store_true", help="Generate a pdf report")
+parser.add_argument("--svg", action="store_true", help="Store charts as svg files")
 parser.add_argument("--pdf_name", type=str, default="report_" + date_now + ".pdf")
 args = parser.parse_args()
 OUTPUT_DIR = args.output_dir
 BASE_DIR = args.input_dir
 STORE_PDF = args.pdf
+STORE_SVG = args.svg
 
 if STORE_PDF:
     from fpdf import FPDF
@@ -341,13 +343,24 @@ for c in unique_polli_classes:
     get_single_distplot_polli(c).write_image(
         OUTPUT_DIR + "fig_distplot_" + c + ".png", format="png"
     )
+    if STORE_SVG:
+        get_single_distplot_polli(c).write_image(
+            OUTPUT_DIR + "fig_distplot_" + c + ".svg", format="svg"
+        )
+fig_barplot_polli = get_barplot_polli()
+fig_barplot_polli.write_image(OUTPUT_DIR + "fig_pollinator_bar.png", format="png")
+if STORE_SVG:
+    fig_barplot_polli.write_image(OUTPUT_DIR + "fig_pollinator_bar.svg", format="svg")
 
-get_barplot_polli().write_image(OUTPUT_DIR + "fig_pollinator_bar.png", format="png")
+fig_by_date_polli = get_dates_polli()
+fig_by_date_polli.write_image(OUTPUT_DIR + "fig_by_date.png", format="png")
+if STORE_SVG:
+    fig_by_date_polli.write_image(OUTPUT_DIR + "fig_by_date.svg", format="svg")
 
-get_dates_polli().write_image(OUTPUT_DIR + "fig_by_date.png", format="png")
-
-
-get_flower_pie_chart().write_image(OUTPUT_DIR + "fig_flower_pie.png", format="png")
+flower_pie_chart = get_flower_pie_chart()
+flower_pie_chart.write_image(OUTPUT_DIR + "fig_flower_pie.png", format="png")
+if STORE_SVG:
+    flower_pie_chart.write_image(OUTPUT_DIR + "fig_flower_pie.svg", format="svg")
 
 if not STORE_PDF:
     print("Done.")
